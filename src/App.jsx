@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import "./App.css";
 
-const TABS = ["Home", "Projects", "Experience", "Education", "Skills", "Activities", "Contact"];
+// ----- Tabs kept -----
+const TABS = ["Home", "Projects", "Experience", "Education"];
 
 const variants = {
   initial: { opacity: 0, y: 10, filter: "blur(4px)" },
@@ -14,23 +15,81 @@ function Section({ children }) {
   return <div className="section">{children}</div>;
 }
 
-/* === CONTENT SECTIONS (filled from your CV) === */
+/* =========================
+   Typewriter headline
+   ========================= */
+function useTypewriter(words, speed = 60, hold = 1200, erase = 35) {
+  const seq = useMemo(() => words, [words]);
+  const [i, setI] = useState(0);       // which word
+  const [t, setT] = useState("");      // text
+  const [phase, setPhase] = useState("typing"); // typing | holding | erasing
+
+  useEffect(() => {
+    let id;
+    const current = seq[i];
+
+    if (phase === "typing") {
+      if (t.length < current.length) {
+        id = setTimeout(() => setT(current.slice(0, t.length + 1)), speed);
+      } else {
+        setPhase("holding");
+      }
+    } else if (phase === "holding") {
+      id = setTimeout(() => setPhase("erasing"), hold);
+    } else if (phase === "erasing") {
+      if (t.length > 0) {
+        id = setTimeout(() => setT(current.slice(0, t.length - 1)), erase);
+      } else {
+        setI((i + 1) % seq.length);
+        setPhase("typing");
+      }
+    }
+    return () => clearTimeout(id);
+  }, [seq, i, t, phase, speed, hold, erase]);
+
+  return t;
+}
+
+/* =========================
+   CONTENT
+   ========================= */
 
 function Home() {
+  const typed = useTypewriter([
+    "Abdollah Hosseini",
+    "Software Engineer",
+    "Web Developer",
+    "Problem Solver",
+  ]);
+
   return (
     <div className="home">
       <div className="home-inner">
-        <h1 className="title xl">Abdollah Hosseini</h1>
-        <p className="subtitle">BSc (Hons) Computer Science with Industrial Placement — University of Bath</p>
-        <p className="muted center">
-          Second-Year CS with a First-Class grade in Year 1 (80%).</p>
-        <p className="muted center">Second-Year Modules: Algorithms, ML, Cybersecurity,
-          HCI, Software Engineering, and Visual Computing.
+        <h1 className="title xl">
+          {" "}
+          <span className="gradient-pp animated-gradient">{typed}</span>
+          <span className="cursor">|</span>
+        </h1>
+
+        <p className="subtitle">
+          I’m a second-year Computer Science student at the University of Bath. I build
+          fast, minimal interfaces and data-driven projects.
         </p>
+
         <div className="cta-row">
-          <a className="btn" href="/Abdollah-CV.pdf" download>Download CV</a>
-          <a className="btn ghost" href="https://www.linkedin.com/in/abdollah-hosseini-9855ab236/" target="_blank">LinkedIn</a>
-          <a className="btn ghost" href="https://github.com/AbdollahHosseini?tab=repositories" target="_blank">GitHub</a>
+          <a className="btn btn-solid" href="/Abdollah-CV.pdf" download>
+            Download CV
+          </a>
+          <a className="btn btn-ghost" href="#projects">
+            View Projects
+          </a>
+          <a
+            className="btn btn-ghost"
+            href="https://github.com/AbdollahHosseini"
+            target="_blank"
+          >
+            GitHub
+          </a>
         </div>
       </div>
     </div>
@@ -40,44 +99,39 @@ function Home() {
 function Projects() {
   const items = [
     {
-      title: "Stock Prediction",
+      title: "Stock Predictor",
       date: "Aug 2025",
-      location: "Bath, United Kingdom",
       bullets: [
-        "End-to-end workflow in Python with pandas, NumPy, yfinance; visualized with matplotlib.",
-        "Engineered features: lagged returns, z-scores, MAs, momentum, Bollinger Bands.",
-        "Compared LSTM (PyTorch) vs Ridge; XGBoost performed best on test set.",
-        "Benchmarked with Directional Accuracy and MAE against persistence & buy-and-hold baselines."
+        "Python pipeline for market data; engineered features & visualised with Matplotlib.",
+        "XGBoost achieved 10% lower MAE vs Ridge; 52% DA outperforming baselines.",
       ],
-      stack: ["Python", "NumPy", "pandas", "matplotlib", "PyTorch", "XGBoost"],
-      code: "https://github.com/AbdollahHosseini?tab=repositories",
-      demo: ""
+      stack: ["Python", "NumPy", "pandas", "Matplotlib", "PyTorch", "XGBoost"],
+      code: "https://github.com/AbdollahHosseini/Stock-Predictor-via-Neural-Network",
     },
     {
-      title: "Calorie Wise",
-      date: "Mar–Apr 2025",
-      location: "Bath, United Kingdom",
+      title: "Portfolio Website",
+      date: "Jul 2025",
       bullets: [
-        "Team-led web app in HTML/CSS/JS for meal planning + calorie & step tracking.",
-        "Led a team of 10 using GitHub/Jira for coordination and delivery.",
-        "Designed competitive feature for consistency; 70%+ of users found it helpful."
+        "Single-page React + Framer Motion with animated transitions and gradient branding.",
+        "Built with Vite; deployed on Vercel; custom domain abdollah.dev.",
       ],
-      stack: ["HTML", "CSS", "JavaScript", "GitHub", "Jira"],
-      code: "",
-      demo: ""
-    }
+      stack: ["React", "Vite", "Framer Motion", "CSS", "Vercel"],
+      demo: "https://abdollah.dev",
+      code: "https://github.com/AbdollahHosseini?tab=repositories",
+    },
   ];
   return (
     <Section>
+      <a id="projects" />
       <div className="stack-v gap-lg">
         {items.map(p => (
           <article key={p.title} className="card">
             <div className="card-head">
-              <h3>{p.title}</h3>
-              <div className="muted">{p.date} · {p.location}</div>
+              <h3 className="gradient-pp">{p.title}</h3>
+              <div className="muted">{p.date}</div>
             </div>
             <ul className="bullets">
-              {p.bullets.map((b,i)=><li key={i}>{b}</li>)}
+              {p.bullets.map((b, i) => <li key={i}>{b}</li>)}
             </ul>
             <ul className="chip-row">
               {p.stack.map(s => <li key={s} className="chip">{s}</li>)}
@@ -99,45 +153,37 @@ function Experience() {
       title: "Back of House Team Member",
       org: "Nando’s",
       date: "Aug 2025 – Present",
-      loc: "Bath, United Kingdom",
       bullets: [
-        "Maintained kitchen operations in a fast-paced environment with high hygiene standards.",
-        "Collaborated under peak pressure to meet demanding service times.",
-        "Managed stock rotation and kitchen organization for smooth operations."
-      ]
+        "Collaborated under peak pressure; ensured hygiene standards; managed stock rotation.",
+      ],
     },
     {
       title: "Treasurer",
-      org: "University of Bath (Society)",
+      org: "University of Bath",
       date: "Jul 2025 – Present",
-      loc: "Bath, United Kingdom",
       bullets: [
-        "Hosted events for 500+ members (Freshers’ Week, Grand Iftar).",
-        "Handled £1,000+ transactions; managed capital allocation to events.",
-        "Secured external sponsorships (e.g., One Ummah) to boost funding and cut costs."
-      ]
+        "Managed finances for a 500+ member society; budgets of £1,000+ per event.",
+        "Sponsorships increased funding by ~30%; cashflow reconciliation across events.",
+      ],
     },
     {
       title: "Summer Intern",
       org: "Care Zone Trading",
-      date: "Jun 2024 – Aug 2024",
-      loc: "Dubai, United Arab Emirates",
+      date: "Jun 2025 – Aug 2025",
       bullets: [
-        "Built a Python inventory system logging 30+ daily shipments into SQLite.",
-        "Optimized search/retrieval with NumPy, improving handling efficiency by ~20%.",
-        "Implemented error handling, queries, and unit tests for reliability."
-      ]
-    }
+        "Python + PostgreSQL inventory system tracking 300+ daily shipments; +20% efficiency.",
+      ],
+    },
   ];
   return (
     <Section>
       <div className="stack-v gap-lg">
         {roles.map(r => (
           <article key={r.title} className="card">
-            <h3>{r.title} — <span className="muted">{r.org}</span></h3>
-            <div className="muted">{r.date} · {r.loc}</div>
+            <h3 className="gradient-pp">{r.title} — <span className="muted">{r.org}</span></h3>
+            <div className="muted">{r.date}</div>
             <ul className="bullets">
-              {r.bullets.map((b,i)=><li key={i}>{b}</li>)}
+              {r.bullets.map((b, i) => <li key={i}>{b}</li>)}
             </ul>
           </article>
         ))}
@@ -151,108 +197,18 @@ function Education() {
     <Section>
       <div className="stack-v gap-lg">
         <article className="card">
-          <h3>University of Bath — BSc (Hons) Computer Science (with placement)</h3>
+          <h3 className="gradient-pp">University of Bath — BSc (Hons) Computer Science</h3>
           <div className="muted">Sep 2024 – Jun 2028</div>
-          <p className="muted">First-Year Grade: First Class Honours (80%). Member of BCSS, CodeSoc, BUIS, Persian Society.</p>
-          <div className="subgrid">
-            <div>
-              <h4>Year 2 Modules</h4>
-              <p className="muted">
-                Advanced Programming; Algorithms & Complexity; Cybersecurity; HCI 1 & 2; Machine Learning;
-                Software Engineering; Visual Computing
-              </p>
-            </div>
-            <div>
-              <h4>Selected First-Year Modules</h4>
-              <ul className="muted list-compact">
-                <li>Artificial Intelligence (74%) — BFS/DFS, A*, CSPs, Naive Bayes</li>
-                <li>Computer Systems Architecture (75%) — OS fundamentals</li>
-                <li>Programming 1 (75%) — Functional programming in Haskell</li>
-                <li>Discrete Mathematics & Databases (77%) — DB design & security</li>
-                <li>Programming 2 (83.5%) — Java OOP, threads, linked lists</li>
-                <li>Mathematics for Computation (96%) — matrices, calculus, Taylor</li>
-              </ul>
-            </div>
-          </div>
-        </article>
-
-        <article className="card">
-          <h3>Dubai English Speaking College (DESS College)</h3>
-          <div className="muted">2017 – 2024</div>
-          <p className="muted">A-Levels: Maths (A*), Computer Science (A*), Economics (A). GCSE: 9999887.</p>
+          <p className="muted">First Year: 80% (First Class). Modules include Algorithms, ML, Cybersecurity, HCI, Software Engineering, Visual Computing.</p>
         </article>
       </div>
     </Section>
   );
 }
 
-function Skills() {
-  const rows = [
-    { k: "Languages", v: "Python, JavaScript, HTML, CSS, Java, Haskell, C, SQL" },
-    { k: "Libraries & Frameworks", v: "pandas, NumPy, Matplotlib, PyTorch, React, Node/Express" },
-    { k: "Tools", v: "VS Code, Vim, Git/GitHub, Jira, AWS, Agile/SCRUM" },
-  ];
-  return (
-    <Section>
-      <div className="grid">
-        {rows.map(r => (
-          <div className="card" key={r.k}>
-            <h3>{r.k}</h3>
-            <p className="muted">{r.v}</p>
-          </div>
-        ))}
-      </div>
-    </Section>
-  );
-}
-
-function Activities() {
-  const items = [
-    {
-      title: "Hackathon Participant",
-      body: "Built an educational analytics tool identifying weak performance areas; helped improve averages in low-scoring subjects."
-    },
-    {
-      title: "Competitive Programming Enthusiast",
-      body: "Solved 40+ problems on LeetCode/Codeforces, sharpening recursion, DP, and interview-style problem solving."
-    },
-    {
-      title: "Web Development Bootcamp",
-      body: "2-month hands-on: HTML/CSS/JS, React, Node/Express, APIs, SQL; delivered personal web pages and projects."
-    }
-  ];
-  return (
-    <Section>
-      <div className="stack-v gap-lg">
-        {items.map(a => (
-          <article key={a.title} className="card">
-            <h3>{a.title}</h3>
-            <p className="muted">{a.body}</p>
-          </article>
-        ))}
-      </div>
-    </Section>
-  );
-}
-
-function Contact() {
-  return (
-    <Section>
-      <div className="card center">
-        <h3>Get in touch</h3>
-        <p className="muted">
-          <a href="mailto:aah221@bath.ac.uk">aah221@bath.ac.uk</a> ·{" "}
-          <a target="_blank" href="https://www.linkedin.com/in/abdollah-hosseini-9855ab236/">LinkedIn</a> ·{" "}
-          <a target="_blank" href="https://github.com/AbdollahHosseini?tab=repositories">GitHub</a>
-        </p>
-        <p className="muted">United Kingdom · +44 790 851 3870</p>
-      </div>
-    </Section>
-  );
-}
-
-/* === APP SHELL WITH TABS + TRANSITIONS === */
-
+/* =========================
+   APP SHELL
+   ========================= */
 export default function App() {
   const [tab, setTab] = useState("Home");
 
@@ -262,9 +218,6 @@ export default function App() {
       case "Projects": return <Projects />;
       case "Experience": return <Experience />;
       case "Education": return <Education />;
-      case "Skills": return <Skills />;
-      case "Activities": return <Activities />;
-      case "Contact": return <Contact />;
       default: return <Home />;
     }
   };
@@ -272,7 +225,7 @@ export default function App() {
   return (
     <div className="app">
       <header className="topbar">
-        <div className="brand">abdollah.dev</div>
+        <div className="brand gradient-pp animated-gradient">abdollah.dev</div>
         <nav className="tabs">
           {TABS.map(t => (
             <button
@@ -301,7 +254,16 @@ export default function App() {
         </AnimatePresence>
       </main>
 
-      <footer className="foot muted">© {new Date().getFullYear()} Abdollah Hosseini</footer>
+      <footer className="foot muted">
+        <div className="footer-links">
+          <a href="mailto:aah221@bath.ac.uk">aah221@bath.ac.uk</a>
+          <span>·</span>
+          <a target="_blank" href="https://github.com/AbdollahHosseini">GitHub</a>
+          <span>·</span>
+          <a target="_blank" href="https://www.linkedin.com/in/abdollah-hosseini-9855ab236/">LinkedIn</a>
+        </div>
+        <div>© {new Date().getFullYear()} Abdollah Hosseini</div>
+      </footer>
     </div>
   );
 }
