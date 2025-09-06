@@ -1,7 +1,15 @@
 :root{
   --bg: #000000;          /* true black */
-  --panel: #0a0a0a;
-  --muted: #a7adc3;
+  --panel:/* ───────── Main shell / Sections ───────── */
+.shell { max-width: var(--max); margin-inline: auto; padding: var(--space-lg) 1rem var(--space-xl); }
+.section { display: grid; gap: var(--space-md); }
+
+/* ───────── Home (centered hero) ───────── */
+.home { display: grid; place-items: center; min-height: calc(100dvh - 150px); }
+.home-inner { text-align: center; max-width: 900px; padding: 0 1rem; }
+.title.xl { font-size: clamp(2.8rem, 8vw, 5rem); line-height: 1.05; margin: 0 0 1.2rem; }
+.subtitle { font-size: clamp(1.05rem, 2.2vw, 1.2rem); color: var(--muted); margin: 0 0 var(--space-md); }
+.cta-row { display: inline-flex; gap: .75rem; flex-wrap: wrap; justify-content: center; }  --muted: #a7adc3;
   --text: #f3f2ff;
   --border: #1a1a1a;
   --radius: 16px;
@@ -11,7 +19,7 @@
   --space-md: 1.5rem;
 
   /* pink -> purple gradient (tuned to your refs) */
-  --g1: #ff7ad8; /* pink */
+  --g1: #e91e63; /* darker pink */
   --g2: #b06cff; /* violet */
   --g3: #7c3aed; /* purple */
 }
@@ -55,32 +63,29 @@ a:hover { text-decoration: underline; }
 
 /* Active = gradient text */
 .tab.active{
-  color: transparent;
-  background: linear-gradient(90deg, var(--g1), var(--g2), var(--g3));
-  -webkit-background-clip: text;
-  background-clip: text;
+  color: var(--text);
 }
 
 /* ───────── Main shell / Sections ───────── */
-.shell { max-width: var(--max); margin-inline: auto; padding: var(--space-lg) 1rem var(--space-xl); }
+.shell { max-width: var(--max); margin-inline: auto; padding: 0 1rem; display: flex; align-items: center; justify-content: center; height: 100%; }
 .section { display: grid; gap: var(--space-md); }
 
 /* ───────── Home (centered hero) ───────── */
-.home { display: grid; place-items: center; min-height: calc(100dvh - 150px); }
+.home { display: flex; align-items: center; justify-content: center; width: 100%; }
 .home-inner { text-align: center; max-width: 900px; padding: 0 1rem; }
-.title.xl { font-size: clamp(2.8rem, 8vw, 5rem); line-height: 1.05; margin: 0 0 1.2rem; }
-.subtitle { font-size: clamp(1.05rem, 2.2vw, 1.2rem); color: var(--muted); margin: 0 0 var(--space-md); }
+.title.xl { font-size: clamp(2.2rem, 6vw, 4rem); line-height: 1.05; margin: 0 0 1rem; }
+.subtitle { font-size: clamp(1rem, 2vw, 1.15rem); color: var(--muted); margin: 0 0 1.5rem; }
 .cta-row { display: inline-flex; gap: .75rem; flex-wrap: wrap; justify-content: center; }
 
 /* ───────── Dynamic gradient title (no glow) ───────── */
 .neon-tron{
   /* same gradient as elsewhere, but animated inside the text */
   background: linear-gradient(90deg, var(--g1), var(--g2), var(--g3));
-  background-size: 200% 200%;
+  background-size: 300% 300%;
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  animation: shift 6s ease-in-out infinite;
+  animation: shift 8s ease-in-out infinite;
 }
 
 /* ───────── Gradient utilities ───────── */
@@ -91,12 +96,14 @@ a:hover { text-decoration: underline; }
   color: transparent;
 }
 .animated-gradient {
-  background-size: 200% 200%;
-  animation: shift 6s ease-in-out infinite;
+  background-size: 300% 300%;
+  animation: shift 8s ease-in-out infinite;
 }
 @keyframes shift {
   0% { background-position: 0% 50%; }
+  25% { background-position: 50% 50%; }
   50% { background-position: 100% 50%; }
+  75% { background-position: 50% 50%; }
   100% { background-position: 0% 50%; }
 }
 
@@ -126,6 +133,7 @@ a:hover { text-decoration: underline; }
   border:1px solid var(--border);
   background:#0b0b0b;
   text-decoration:none;
+  cursor: pointer;
 }
 .link-btn:hover{ border-color:#2a2a2a; transform: translateY(-1px); }
 
@@ -135,6 +143,7 @@ a:hover { text-decoration: underline; }
   padding: .85rem 1.15rem; border-radius: 999px;
   border: 1px solid var(--border);
   transition: transform .15s ease, border-color .15s ease, background .15s ease;
+  cursor: pointer;
 }
 .btn:hover { transform: translateY(-1px); border-color: #2e2e2e; }
 .btn-solid {
@@ -160,9 +169,63 @@ a:hover { text-decoration: underline; }
   width:42px; height:42px; display:grid; place-items:center;
   border:1px solid var(--border); border-radius:12px; background:#0b0b0b;
   color: var(--text);
+  cursor: pointer;
 }
 .icon-btn:hover{ border-color:#2a2a2a; transform:translateY(-1px); }
 .copyright{ color:var(--muted); font-size:.9rem; }
+
+/* ───────── Mobile responsive styles ───────── */
+.desktop-only { display: block; }
+.mobile-only { display: none; }
+
+.hamburger {
+  background: transparent;
+  border: none;
+  color: var(--text);
+  cursor: pointer;
+  padding: 0.5rem;
+}
+
+.mobile-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: rgba(0,0,0,.95);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  z-index: 20;
+}
+
+.mobile-item {
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  font-size: 1rem;
+  font-weight: 500;
+  padding: 0.75rem 0;
+  text-align: left;
+  cursor: pointer;
+  transition: color .2s ease;
+}
+
+.mobile-item:hover { color: var(--text); }
+
+.mobile-item.active {
+  color: transparent;
+  background: linear-gradient(90deg, var(--g1), var(--g2), var(--g3));
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+@media (max-width: 768px) {
+  .desktop-only { display: none; }
+  .mobile-only { display: block; }
+}
 
 /* ---------- Responsive menu ---------- */
 .desktop-only { display: flex; }
@@ -196,13 +259,13 @@ a:hover { text-decoration: underline; }
   color: var(--muted);
   font-size: 1rem;
   border-top: 1px solid var(--border);
+  cursor: pointer;
+  transition: color .2s ease;
 }
 .mobile-item:first-child{ border-top: none; }
 .mobile-item:hover{ color: var(--text); }
 .mobile-item.active{
-  color: transparent;
-  background: linear-gradient(90deg, var(--g1), var(--g2), var(--g3));
-  -webkit-background-clip: text; background-clip: text;
+  color: var(--text);
 }
 
 /* Show hamburger on small screens, hide desktop tabs */

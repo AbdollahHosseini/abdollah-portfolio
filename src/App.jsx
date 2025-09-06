@@ -24,8 +24,12 @@ function Home() {
           fast, minimal interfaces and data-driven projects.
         </p>
         <div className="cta-row">
-          <a className="btn btn-solid" href="/Abdollah-CV.pdf" download>Download CV</a>
-          <a className="btn btn-ghost" href="#projects">View Projects</a>
+          <button
+            className="btn btn-solid"
+            onClick={() => typeof window !== 'undefined' && window.setTab && window.setTab('Projects')}
+          >
+            View Projects
+          </button>
         </div>
       </div>
     </div>
@@ -169,6 +173,8 @@ export default function App() {
   const [tab, setTab] = useState("Home");
   const [mobileOpen, setMobileOpen] = useState(false);
 
+  // Expose setTab for Home button
+  if (typeof window !== 'undefined') window.setTab = setTab;
   return (
     <div className="app">
       <header className="topbar">
