@@ -19,9 +19,9 @@
   --space-md: 1.5rem;
 
   /* pink -> purple gradient (tuned to your refs) */
-  --g1: #e91e63; /* darker pink */
-  --g2: #b06cff; /* violet */
-  --g3: #7c3aed; /* purple */
+  --g1: #ec4899; /* pink */
+  --g2: #8b5cf6; /* purple */
+  --g3: #8b5cf6; /* purple */
 }
 
 * { box-sizing: border-box; }
@@ -51,7 +51,7 @@ a:hover { text-decoration: underline; }
 /* Minimal text-only tabs */
 .tab{
   background: transparent;
-  color: var(--muted);
+  color: #9ca3af;
   border: none;
   font-size: 1rem;
   font-weight: 500;
@@ -59,11 +59,12 @@ a:hover { text-decoration: underline; }
   cursor: pointer;
   transition: color .2s ease;
 }
-.tab:hover{ color: var(--text); }
+.tab:hover{ color: #d1d5db; }
 
-/* Active = gradient text */
+/* Active = solid color */
 .tab.active{
   color: var(--text);
+  font-weight: 600;
 }
 
 /* ───────── Main shell / Sections ───────── */
@@ -142,13 +143,44 @@ a:hover { text-decoration: underline; }
   display: inline-block; font-weight: 600;
   padding: .85rem 1.15rem; border-radius: 999px;
   border: 1px solid var(--border);
-  transition: transform .15s ease, border-color .15s ease, background .15s ease;
+  transition: transform .15s ease, border-color .15s ease, color .2s ease, text-shadow .2s ease;
   cursor: pointer;
+  position: relative;
+  overflow: hidden;
 }
 .btn:hover { transform: translateY(-1px); border-color: #2e2e2e; }
 .btn-solid {
-  background: linear-gradient(90deg, var(--g1), var(--g2), var(--g3));
-  color: #0b0b0b;
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--text);
+}
+.btn-solid::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: var(--text);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.6s ease, height 0.6s ease, opacity 0.1s ease;
+  z-index: -1;
+  opacity: 0;
+}
+.btn-solid:hover::before {
+  width: 300px;
+  height: 300px;
+  opacity: 1;
+}
+.btn-solid:not(:hover)::before {
+  transition: width 0.8s ease, height 0.8s ease, opacity 0.1s ease;
+  opacity: 0;
+}
+.btn-solid:hover {
+  color: #000000;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 20px rgba(255, 255, 255, 0.6), 0 0 30px rgba(255, 255, 255, 0.4);
+  border-color: var(--text);
 }
 .btn-ghost { background: transparent; color: var(--text); }
 
@@ -256,16 +288,17 @@ a:hover { text-decoration: underline; }
   padding: .9rem 1.1rem;
   background: transparent;
   border: none;
-  color: var(--muted);
+  color: #9ca3af;
   font-size: 1rem;
   border-top: 1px solid var(--border);
   cursor: pointer;
   transition: color .2s ease;
 }
 .mobile-item:first-child{ border-top: none; }
-.mobile-item:hover{ color: var(--text); }
+.mobile-item:hover{ color: #d1d5db; }
 .mobile-item.active{
-  color: var(--text);
+  color: #3b82f6;
+  font-weight: 600;
 }
 
 /* Show hamburger on small screens, hide desktop tabs */
