@@ -173,7 +173,6 @@ export default function App() {
   const [tab, setTab] = useState("Home");
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  // Expose setTab for Home button
   if (typeof window !== 'undefined') window.setTab = setTab;
   return (
     <div className="app">
