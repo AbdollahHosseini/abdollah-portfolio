@@ -102,7 +102,7 @@ const items = [
             <ul className="bullets">{p.bullets.map((b, i) => <li key={i}>{b}</li>)}</ul>
             <ul className="chip-row">{p.stack.map(s => <li key={s} className="chip">{s}</li>)}</ul>
             <div className="links">
-              {p.code && <a className="link-btn" target="_blank" href={p.code}>Code</a>}
+              {p.title === "Portfolio Website" ? <a className="link-btn" target="_blank" href="https://abdollah.dev">You are already here, silly!</a> : <a className="link-btn" target="_blank" href={p.code}>Code</a>}
             </div>
           </article>
         ))}

@@ -254,7 +254,7 @@ a:hover { text-decoration: underline; }
   background-clip: text;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 640px) {
   .desktop-only { display: none; }
   .mobile-only { display: block; }
 }
@@ -302,7 +302,7 @@ a:hover { text-decoration: underline; }
 }
 
 /* Show hamburger on small screens, hide desktop tabs */
-@media (max-width: 720px){
+@media (max-width: 640px){
   .desktop-only { display: none; }
   .mobile-only  { display: grid; }
 }
